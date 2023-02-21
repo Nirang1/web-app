@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: pyapp
-        image: pyapp:1.0
+        image: ecitanand/pyapp:1.1
         env:
         - name: FLASK_APP
           value: "project/__init__.py"
