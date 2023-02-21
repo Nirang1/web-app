@@ -21,6 +21,8 @@ spec:
           value: "project/__init__.py"
         - name: FLASK_DEBUG
           value: "1"
+        - name: FLASK_RUN_HOST
+          value: 0.0.0.0  
         ports:
         - containerPort: 5000
 ---
