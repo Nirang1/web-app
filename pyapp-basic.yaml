@@ -16,6 +16,11 @@ spec:
       containers:
       - name: pyapp
         image: pyapp:1.0
+        env:
+        - name: FLASK_APP
+          value: "project/__init__.py"
+        - name: FLASK_DEBUG
+          value: 1
         ports:
         - containerPort: 5000
 ---
