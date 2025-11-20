@@ -60,9 +60,22 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+      
+      - name: Debug - List downloaded files
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo "=== List all files ==="
+          ls -laR
+          echo "=== Check release.zip ==="
+          if [ -f release.zip ]; then
+            echo "release.zip exists"
+            ls -lh release.zip
+            echo "=== Contents of release.zip ==="
+            unzip -l release.zip
+          else
+            echo "release.zip not found!"
+          fi
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -71,11 +84,24 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_96EA8B3675794F17854ED5A48B996DEB }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_03EB60F5AD1B4A86956F657016F50BF5 }}
 
+      - name: Debug - Verify Azure login
+        run: |
+          echo "=== Azure account info ==="
+          az account show
+          echo "=== Web app info ==="
+          az webapp show --name anwebapp11 --resource-group $(az webapp list --query "[?name=='anwebapp11'].resourceGroup" -o tsv) --query "{name:name, state:state, defaultHostName:defaultHostName}"
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'anwebapp11'
           slot-name: 'Production'
-          package: '.'
-          type: 'zip'
+          package: 'release.zip'
+      
+      - name: Debug - Deployment result
+        if: always()
+        run: |
+          echo "=== Deployment completed ==="
+          echo "Deployment ID: ${{ steps.deploy-to-webapp.outputs.deployment-id }}"
+          echo "Web App URL: ${{ steps.deploy-to-webapp.outputs.webapp-url }}"
