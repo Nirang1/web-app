@@ -1,2 +1,2 @@
 #!/bin/bash
-gunicorn --bind=0.0.0.0 --timeout 600 project:app
+gunicorn --bind=0.0.0.0:8000 --timeout 600 --workers 4 project:app
